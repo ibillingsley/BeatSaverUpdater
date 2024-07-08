@@ -38,7 +38,7 @@ namespace BeatSaverUpdater.UI
         {
             this.container = container;
             this.hoverHintController = hoverHintController;
-            this.selectLevelCategoryViewController = selectLevelCategoryViewController; 
+            this.selectLevelCategoryViewController = selectLevelCategoryViewController;
             levelCategorySegmentedControl = selectLevelCategoryViewController.GetField<IconSegmentedControl, SelectLevelCategoryViewController>("_levelFilterCategoryIconSegmentedControl");
             this.levelCollectionNavigationController = levelCollectionNavigationController;
             this.standardLevelDetailViewController = standardLevelDetailViewController;
@@ -99,7 +99,7 @@ namespace BeatSaverUpdater.UI
             canvas.additionalShaderChannels = additionalShaderChannels;
             container.InstantiateComponent<VRGraphicRaycaster>(gameObject);
 
-            var hoverHint= image.gameObject.AddComponent<HoverHint>();
+            var hoverHint = image.gameObject.AddComponent<HoverHint>();
             hoverHint.SetField("_hoverHintController", hoverHintController);
             hoverHint.text = "Update Map!";
 
@@ -114,7 +114,7 @@ namespace BeatSaverUpdater.UI
             }
         }
 
-        private async Task BeatmapSelected(IPreviewBeatmapLevel beatmapLevel)
+        private async Task BeatmapSelected(BeatmapLevel beatmapLevel)
         {
             tokenSource?.Cancel();
             tokenSource?.Dispose();
@@ -122,11 +122,11 @@ namespace BeatSaverUpdater.UI
 
             if (image != null)
             {
-                if (beatmapLevel is CustomPreviewBeatmapLevel customPreviewBeatmapLevel && !customPreviewBeatmapLevel.levelID.EndsWith(" WIP"))
+                if (beatmapLevel is { hasPrecalculatedData: false } && !beatmapLevel.levelID.EndsWith(" WIP"))
                 {
-                    if (!PluginConfig.Instance.UseCache || songDetailsWrapper == null || !await songDetailsWrapper.SongExists(customPreviewBeatmapLevel.GetBeatmapHash()))
+                    if (!PluginConfig.Instance.UseCache || songDetailsWrapper == null || !await songDetailsWrapper.SongExists(beatmapLevel.GetBeatmapHash()))
                     {
-                        image.gameObject.SetActive(await customPreviewBeatmapLevel.NeedsUpdate(tokenSource.Token));
+                        image.gameObject.SetActive(await beatmapLevel.NeedsUpdate(tokenSource.Token));
                         return;
                     }
                 }
@@ -136,7 +136,7 @@ namespace BeatSaverUpdater.UI
 
         private async void Clicked(PointerEventData _)
         {
-            if (standardLevelDetailViewController.beatmapLevel is CustomPreviewBeatmapLevel beatmapLevel)
+            if (standardLevelDetailViewController.beatmapLevel is { hasPrecalculatedData: false } beatmapLevel)
             {
                 var newHash = (await beatmapLevel.GetBeatSaverBeatmap(CancellationToken.None))?.LatestVersion.Hash;
 
@@ -162,11 +162,11 @@ namespace BeatSaverUpdater.UI
                     }
                 }
 
-                popupModal.ShowYesNoModal("This map has an update on BeatSaver. Do you want to download it?", () => UpdateRequested(beatmapLevel));   
+                popupModal.ShowYesNoModal("This map has an update on BeatSaver. Do you want to download it?", () => UpdateRequested(beatmapLevel));
             }
         }
 
-        private async void UpdateRequested(CustomPreviewBeatmapLevel beatmapLevel)
+        private async void UpdateRequested(BeatmapLevel beatmapLevel)
         {
             tokenSource?.Cancel();
             tokenSource = new CancellationTokenSource();
@@ -180,14 +180,13 @@ namespace BeatSaverUpdater.UI
             }
         }
 
-        private void OpenMap(CustomPreviewBeatmapLevel beatmapLevel)
+        private void OpenMap(BeatmapLevel beatmapLevel)
         {
             levelCategorySegmentedControl.SelectCellWithNumber(3);
-            selectLevelCategoryViewController.LevelFilterCategoryIconSegmentedControlDidSelectCell(levelCategorySegmentedControl, 3);
             levelCollectionNavigationController.SelectLevel(beatmapLevel);
         }
 
-        private void OnSongsLoaded(SongCore.Loader _, System.Collections.Concurrent.ConcurrentDictionary<string, CustomPreviewBeatmapLevel> __)
+        private void OnSongsLoaded(SongCore.Loader _, System.Collections.Concurrent.ConcurrentDictionary<string, BeatmapLevel> __)
         {
             SongCore.Loader.SongsLoadedEvent -= OnSongsLoaded;
             var oldLevel = SongCore.Loader.GetLevelByHash(oldLevelHash ?? "");
@@ -203,7 +202,7 @@ namespace BeatSaverUpdater.UI
             }
         }
 
-        private async void UpdateReferences(CustomPreviewBeatmapLevel? oldLevel, CustomPreviewBeatmapLevel downloadedLevel)
+        private async void UpdateReferences(BeatmapLevel? oldLevel, BeatmapLevel downloadedLevel)
         {
             if (oldLevel != null)
             {
@@ -218,10 +217,10 @@ namespace BeatSaverUpdater.UI
             popupModal.HideModal();
         }
 
-        private void UpdateReferencesAsync(CustomPreviewBeatmapLevel oldLevel, CustomPreviewBeatmapLevel downloadedLevel)
+        private void UpdateReferencesAsync(BeatmapLevel oldLevel, BeatmapLevel downloadedLevel)
         {
             var preventDelete = false;
-            
+
             foreach (var migrator in migrators)
             {
                 preventDelete = preventDelete || migrator.MigrateMap(oldLevel, downloadedLevel);
@@ -229,7 +228,11 @@ namespace BeatSaverUpdater.UI
 
             if (!preventDelete)
             {
-                SongCore.Loader.Instance.DeleteSong(oldLevel.customLevelPath);
+                var folderPath = oldLevel.GetFolderPath();
+                if (!string.IsNullOrEmpty(folderPath))
+                {
+                    SongCore.Loader.Instance.DeleteSong(folderPath);
+                }
             }
         }
     }

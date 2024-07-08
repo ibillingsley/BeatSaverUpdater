@@ -16,10 +16,14 @@ namespace BeatSaverUpdater
     {
         private static BeatSaver? beatSaverInstance;
 
-        public static string GetBeatmapHash(this CustomPreviewBeatmapLevel beatmapLevel) =>
+        public static string GetBeatmapHash(this BeatmapLevel beatmapLevel) =>
             SongCore.Utilities.Hashing.GetCustomLevelHash(beatmapLevel);
 
-        public static async Task<Beatmap?> GetBeatSaverBeatmap(this CustomPreviewBeatmapLevel beatmapLevel, CancellationToken token)
+        [Obsolete()]
+        public static string GetFolderPath(this BeatmapLevel beatmapLevel) =>
+            SongCore.Collections.GetCustomLevelPath(beatmapLevel.levelID);
+
+        public static async Task<Beatmap?> GetBeatSaverBeatmap(this BeatmapLevel beatmapLevel, CancellationToken token)
         {
             if (beatSaverInstance == null)
             {
@@ -29,7 +33,7 @@ namespace BeatSaverUpdater
 
             var hash = beatmapLevel.GetBeatmapHash();
             var map = await beatSaverInstance.BeatmapByHash(hash, token);
-            
+
             if (map != null && !string.Equals(map.LatestVersion.Hash, hash, StringComparison.OrdinalIgnoreCase))
             {
                 return map;
@@ -38,13 +42,13 @@ namespace BeatSaverUpdater
             return null;
         }
 
-        public static async Task<bool> NeedsUpdate(this CustomPreviewBeatmapLevel beatmapLevel, CancellationToken token)
+        public static async Task<bool> NeedsUpdate(this BeatmapLevel beatmapLevel, CancellationToken token)
         {
             var map = await beatmapLevel.GetBeatSaverBeatmap(token);
             return map != null;
         }
 
-        public static async Task<string?> UpdateBeatmap(this CustomPreviewBeatmapLevel beatmapLevel, CancellationToken token, IProgress<double> progress)
+        public static async Task<string?> UpdateBeatmap(this BeatmapLevel beatmapLevel, CancellationToken token, IProgress<double> progress)
         {
             var songDownloaded = false;
             while (!songDownloaded)
@@ -88,8 +92,13 @@ namespace BeatSaverUpdater
         private static string FolderNameForBeatSaverMap(Beatmap song)
         {
             // A workaround for the max path issue and long folder names
+            var maxLength = 49;
             var longFolderName = song.ID + " (" + song.Metadata.LevelAuthorName + " - " + song.Metadata.SongName;
-            return longFolderName.Truncate(49, true) + ")";
+            if (longFolderName.Length > maxLength)
+            {
+                longFolderName = longFolderName.Substring(0, maxLength - 3) + "...";
+            }
+            return longFolderName + ")";
         }
 
         private static async Task ExtractZipAsync(byte[] zip, string customSongsPath, string songName, bool overwrite = false)
