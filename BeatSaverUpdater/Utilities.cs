@@ -88,8 +88,13 @@ namespace BeatSaverUpdater
         private static string FolderNameForBeatSaverMap(Beatmap song)
         {
             // A workaround for the max path issue and long folder names
+            var maxLength = 49;
             var longFolderName = song.ID + " (" + song.Metadata.LevelAuthorName + " - " + song.Metadata.SongName;
-            return longFolderName.Truncate(49, true) + ")";
+            if (longFolderName.Length > maxLength)
+            {
+                longFolderName = longFolderName.Substring(0, maxLength - 3) + "...";
+            }
+            return longFolderName + ")";
         }
 
         private static async Task ExtractZipAsync(byte[] zip, string customSongsPath, string songName, bool overwrite = false)
