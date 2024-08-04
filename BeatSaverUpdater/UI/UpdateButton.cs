@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -75,7 +76,7 @@ namespace BeatSaverUpdater.UI
             image.OnClickEvent += Clicked;
             image.sprite = BeatSaberMarkupLanguage.Utilities.LoadSpriteRaw(ms.ToArray());
             image.sprite.texture.wrapMode = TextureWrapMode.Clamp;
-            image.gameObject.SetActive(false);
+            standardLevelDetailViewController.StartCoroutine(SetActive(false));
         }
 
         private ClickableImage CreateImage()
@@ -106,6 +107,12 @@ namespace BeatSaverUpdater.UI
             return image;
         }
 
+        private IEnumerator SetActive(bool value)
+        {
+            yield return null;
+            image?.gameObject.SetActive(value);
+        }
+
         private void ContentChanged(StandardLevelDetailViewController standardLevelDetailViewController, StandardLevelDetailViewController.ContentType contentType)
         {
             if (contentType == StandardLevelDetailViewController.ContentType.OwnedAndReady)
@@ -126,11 +133,12 @@ namespace BeatSaverUpdater.UI
                 {
                     if (!PluginConfig.Instance.UseCache || songDetailsWrapper == null || !await songDetailsWrapper.SongExists(beatmapLevel.GetBeatmapHash()))
                     {
-                        image.gameObject.SetActive(await beatmapLevel.NeedsUpdate(tokenSource.Token));
+                        var needsUpdate = await beatmapLevel.NeedsUpdate(tokenSource.Token);
+                        standardLevelDetailViewController.StartCoroutine(SetActive(needsUpdate));
                         return;
                     }
                 }
-                image.gameObject.SetActive(false);
+                standardLevelDetailViewController.StartCoroutine(SetActive(false));
             }
         }
 
