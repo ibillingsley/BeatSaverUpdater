@@ -76,7 +76,7 @@ namespace BeatSaverUpdater.UI
             image.OnClickEvent += Clicked;
             image.sprite = BeatSaberMarkupLanguage.Utilities.LoadSpriteRaw(ms.ToArray());
             image.sprite.texture.wrapMode = TextureWrapMode.Clamp;
-            standardLevelDetailViewController.StartCoroutine(SetActive(false));
+            image.gameObject.SetActive(false);
         }
 
         private ClickableImage CreateImage()
