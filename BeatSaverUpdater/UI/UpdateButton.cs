@@ -74,7 +74,7 @@ namespace BeatSaverUpdater.UI
             }
 
             image.OnClickEvent += Clicked;
-            image.sprite = BeatSaberMarkupLanguage.Utilities.LoadSpriteRaw(ms.ToArray());
+            image.sprite = await BeatSaberMarkupLanguage.Utilities.LoadSpriteAsync(ms.ToArray());
             image.sprite.texture.wrapMode = TextureWrapMode.Clamp;
             image.gameObject.SetActive(false);
         }
