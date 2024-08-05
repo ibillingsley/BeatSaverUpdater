@@ -2,8 +2,8 @@
     "$schema": "https://raw.githubusercontent.com/bsmg/BSIPA-MetadataFileSchema/master/Schema.json",
     "id": "BeatSaverUpdater",
     "name": "BeatSaverUpdater",
-    "author": "PixelBoom",
-    "version": "1.2.2",
+    "author": "PixelBoom, iza",
+    "version": "1.2.4",
     "description": "Alerts you of updates to maps and updates them to the latest version.",
     "gameVersion": "1.37.0",
     "icon": "BeatSaverUpdater.Images.Logo.png",
@@ -15,7 +15,6 @@
         "BeatSaverSharp": "^3.4.2"
     },
     "links": {
-        "project-source": "https://github.com/rithik-b/BeatSaverUpdater",
-        "donate": "https://ko-fi.com/pixelboom"
+        "project-source": "https://github.com/ibillingsley/BeatSaverUpdater"
     }
 }
