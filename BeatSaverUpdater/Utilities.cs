@@ -16,14 +16,10 @@ namespace BeatSaverUpdater
     {
         private static BeatSaver? beatSaverInstance;
 
-        public static string GetBeatmapHash(this BeatmapLevel beatmapLevel) =>
+        public static string GetBeatmapHash(this CustomPreviewBeatmapLevel beatmapLevel) =>
             SongCore.Utilities.Hashing.GetCustomLevelHash(beatmapLevel);
 
-        [Obsolete()]
-        public static string GetFolderPath(this BeatmapLevel beatmapLevel) =>
-            SongCore.Collections.GetCustomLevelPath(beatmapLevel.levelID);
-
-        public static async Task<Beatmap?> GetBeatSaverBeatmap(this BeatmapLevel beatmapLevel, CancellationToken token)
+        public static async Task<Beatmap?> GetBeatSaverBeatmap(this CustomPreviewBeatmapLevel beatmapLevel, CancellationToken token)
         {
             if (beatSaverInstance == null)
             {
@@ -33,7 +29,7 @@ namespace BeatSaverUpdater
 
             var hash = beatmapLevel.GetBeatmapHash();
             var map = await beatSaverInstance.BeatmapByHash(hash, token);
-
+            
             if (map != null && !string.Equals(map.LatestVersion.Hash, hash, StringComparison.OrdinalIgnoreCase))
             {
                 return map;
@@ -42,13 +38,13 @@ namespace BeatSaverUpdater
             return null;
         }
 
-        public static async Task<bool> NeedsUpdate(this BeatmapLevel beatmapLevel, CancellationToken token)
+        public static async Task<bool> NeedsUpdate(this CustomPreviewBeatmapLevel beatmapLevel, CancellationToken token)
         {
             var map = await beatmapLevel.GetBeatSaverBeatmap(token);
             return map != null;
         }
 
-        public static async Task<string?> UpdateBeatmap(this BeatmapLevel beatmapLevel, CancellationToken token, IProgress<double> progress)
+        public static async Task<string?> UpdateBeatmap(this CustomPreviewBeatmapLevel beatmapLevel, CancellationToken token, IProgress<double> progress)
         {
             var songDownloaded = false;
             while (!songDownloaded)

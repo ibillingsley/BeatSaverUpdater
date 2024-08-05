@@ -8,6 +8,6 @@
         /// <param name="oldMap"></param>
         /// <param name="newMap"></param>
         /// <returns>Returns true if old map should not be deleted</returns>
-        public bool MigrateMap(BeatmapLevel oldMap, BeatmapLevel newMap);
+        public bool MigrateMap(CustomPreviewBeatmapLevel oldMap, CustomPreviewBeatmapLevel newMap);
     }
 }

@@ -121,7 +121,7 @@ namespace BeatSaverUpdater.UI
             }
         }
 
-        private async Task BeatmapSelected(BeatmapLevel beatmapLevel)
+        private async Task BeatmapSelected(IPreviewBeatmapLevel beatmapLevel)
         {
             tokenSource?.Cancel();
             tokenSource?.Dispose();
@@ -129,11 +129,11 @@ namespace BeatSaverUpdater.UI
 
             if (image != null)
             {
-                if (beatmapLevel is { hasPrecalculatedData: false } && !beatmapLevel.levelID.EndsWith(" WIP"))
+                if (beatmapLevel is CustomPreviewBeatmapLevel customPreviewBeatmapLevel && !customPreviewBeatmapLevel.levelID.EndsWith(" WIP"))
                 {
-                    if (!PluginConfig.Instance.UseCache || songDetailsWrapper == null || !await songDetailsWrapper.SongExists(beatmapLevel.GetBeatmapHash()))
+                    if (!PluginConfig.Instance.UseCache || songDetailsWrapper == null || !await songDetailsWrapper.SongExists(customPreviewBeatmapLevel.GetBeatmapHash()))
                     {
-                        var needsUpdate = await beatmapLevel.NeedsUpdate(tokenSource.Token);
+                        var needsUpdate = await customPreviewBeatmapLevel.NeedsUpdate(tokenSource.Token);
                         standardLevelDetailViewController.StartCoroutine(SetActive(needsUpdate));
                         return;
                     }
@@ -144,7 +144,7 @@ namespace BeatSaverUpdater.UI
 
         private async void Clicked(PointerEventData _)
         {
-            if (standardLevelDetailViewController.beatmapLevel is { hasPrecalculatedData: false } beatmapLevel)
+            if (standardLevelDetailViewController.beatmapLevel is CustomPreviewBeatmapLevel beatmapLevel)
             {
                 var newHash = (await beatmapLevel.GetBeatSaverBeatmap(CancellationToken.None))?.LatestVersion.Hash;
 
@@ -174,7 +174,7 @@ namespace BeatSaverUpdater.UI
             }
         }
 
-        private async void UpdateRequested(BeatmapLevel beatmapLevel)
+        private async void UpdateRequested(CustomPreviewBeatmapLevel beatmapLevel)
         {
             tokenSource?.Cancel();
             tokenSource = new CancellationTokenSource();
@@ -188,13 +188,13 @@ namespace BeatSaverUpdater.UI
             }
         }
 
-        private void OpenMap(BeatmapLevel beatmapLevel)
+        private void OpenMap(CustomPreviewBeatmapLevel beatmapLevel)
         {
             levelCategorySegmentedControl.SelectCellWithNumber(3);
             levelCollectionNavigationController.SelectLevel(beatmapLevel);
         }
 
-        private void OnSongsLoaded(SongCore.Loader _, System.Collections.Concurrent.ConcurrentDictionary<string, BeatmapLevel> __)
+        private void OnSongsLoaded(SongCore.Loader _, System.Collections.Concurrent.ConcurrentDictionary<string, CustomPreviewBeatmapLevel> __)
         {
             SongCore.Loader.SongsLoadedEvent -= OnSongsLoaded;
             var oldLevel = SongCore.Loader.GetLevelByHash(oldLevelHash ?? "");
@@ -210,7 +210,7 @@ namespace BeatSaverUpdater.UI
             }
         }
 
-        private async void UpdateReferences(BeatmapLevel? oldLevel, BeatmapLevel downloadedLevel)
+        private async void UpdateReferences(CustomPreviewBeatmapLevel? oldLevel, CustomPreviewBeatmapLevel downloadedLevel)
         {
             if (oldLevel != null)
             {
@@ -225,7 +225,7 @@ namespace BeatSaverUpdater.UI
             popupModal.HideModal();
         }
 
-        private void UpdateReferencesAsync(BeatmapLevel oldLevel, BeatmapLevel downloadedLevel)
+        private void UpdateReferencesAsync(CustomPreviewBeatmapLevel oldLevel, CustomPreviewBeatmapLevel downloadedLevel)
         {
             var preventDelete = false;
 
@@ -236,11 +236,7 @@ namespace BeatSaverUpdater.UI
 
             if (!preventDelete)
             {
-                var folderPath = oldLevel.GetFolderPath();
-                if (!string.IsNullOrEmpty(folderPath))
-                {
-                    SongCore.Loader.Instance.DeleteSong(folderPath);
-                }
+                SongCore.Loader.Instance.DeleteSong(oldLevel.customLevelPath);
             }
         }
     }
