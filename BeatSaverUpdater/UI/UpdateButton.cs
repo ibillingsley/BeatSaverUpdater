@@ -191,6 +191,7 @@ namespace BeatSaverUpdater.UI
         private void OpenMap(CustomPreviewBeatmapLevel beatmapLevel)
         {
             levelCategorySegmentedControl.SelectCellWithNumber(3);
+            selectLevelCategoryViewController.InvokeMethod<object, SelectLevelCategoryViewController>("LevelFilterCategoryIconSegmentedControlDidSelectCell", levelCategorySegmentedControl, 3);
             levelCollectionNavigationController.SelectLevel(beatmapLevel);
         }
 
