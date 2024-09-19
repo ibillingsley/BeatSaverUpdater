@@ -9,14 +9,14 @@ namespace BeatSaverUpdater.UI
     {
         public void Initialize()
         {
-            BSMLSettings.instance.AddSettingsMenu(nameof(BeatSaverUpdater), "BeatSaverUpdater.UI.SettingsView.bsml", this);
+            BSMLSettings.Instance.AddSettingsMenu(nameof(BeatSaverUpdater), "BeatSaverUpdater.UI.SettingsView.bsml", this);
         }
 
         public void Dispose()
         {
-            if (BSMLSettings.instance != null)
+            if (BSMLSettings.Instance != null)
             {
-                BSMLSettings.instance.RemoveSettingsMenu(this);
+                BSMLSettings.Instance.RemoveSettingsMenu(this);
             }
         }
         

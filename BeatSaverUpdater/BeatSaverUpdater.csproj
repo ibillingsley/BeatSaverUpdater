@@ -22,6 +22,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Reference Include="BeatSaber.ViewSystem">
+		  <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BeatSaber.ViewSystem.dll</HintPath>
+		</Reference>
 		<Reference Include="BeatSaberPlaylistsLib">
 		  <HintPath>$(BeatSaberDir)\Libs\BeatSaberPlaylistsLib.dll</HintPath>
 		  <Private>False</Private>
@@ -33,6 +36,9 @@
 		<Reference Include="Hive.Versioning">
 		  <HintPath>$(BeatSaberDir)\Libs\Hive.Versioning.dll</HintPath>
 		  <Private>False</Private>
+		</Reference>
+		<Reference Include="SegmentedControl">
+		  <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\SegmentedControl.dll</HintPath>
 		</Reference>
 		<Reference Include="SongDetailsCache">
 		  <HintPath>$(BeatSaberDir)\Libs\SongDetailsCache.dll</HintPath>

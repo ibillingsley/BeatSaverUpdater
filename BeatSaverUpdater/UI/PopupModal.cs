@@ -52,7 +52,7 @@ namespace BeatSaverUpdater.UI
         {
             if (!parsed)
             {
-                BSMLParser.instance.Parse(BeatSaberMarkupLanguage.Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "BeatSaverUpdater.UI.PopupModal.bsml"), levelDetailViewController.gameObject, this);
+                BSMLParser.Instance.Parse(BeatSaberMarkupLanguage.Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "BeatSaverUpdater.UI.PopupModal.bsml"), levelDetailViewController.gameObject, this);
                 modalPosition = modalTransform.localPosition;
                 loadingControl = Object.Instantiate(levelDetailViewController.GetField<LoadingControl, StandardLevelDetailViewController>("_loadingControl"), verticalTransform);
                 Object.Destroy(loadingControl.GetComponent<Touchable>());
