@@ -19,9 +19,8 @@ namespace BeatSaverUpdater
         public static string GetBeatmapHash(this BeatmapLevel beatmapLevel) =>
             SongCore.Utilities.Hashing.GetCustomLevelHash(beatmapLevel);
 
-        [Obsolete()]
         public static string GetFolderPath(this BeatmapLevel beatmapLevel) =>
-            SongCore.Collections.GetCustomLevelPath(beatmapLevel.levelID);
+            SongCore.Collections.GetLoadedSaveData(beatmapLevel.levelID)?.customLevelFolderInfo.folderPath ?? string.Empty;
 
         public static async Task<Beatmap?> GetBeatSaverBeatmap(this BeatmapLevel beatmapLevel, CancellationToken token)
         {
