@@ -8,6 +8,7 @@ using BeatSaberMarkupLanguage.Components;
 using BeatSaverUpdater.Migration;
 using HMUI;
 using IPA.Utilities;
+using IPA.Utilities.Async;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -117,7 +118,7 @@ namespace BeatSaverUpdater.UI
         {
             if (contentType == StandardLevelDetailViewController.ContentType.OwnedAndReady)
             {
-                _ = Task.Run(() => BeatmapSelected(standardLevelDetailViewController.beatmapLevel));
+                UnityMainThreadTaskScheduler.Factory.StartNew(() => BeatmapSelected(standardLevelDetailViewController.beatmapLevel));
             }
         }
 
