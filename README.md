@@ -16,7 +16,7 @@ To install, move the dll to your Plugins folder.
 **SongCore**, **BeatSaberMarkupLanguage (BSML)**, **SiraUtil** and **SongDetailsCache** are required for this mod, so please download the latest version from ModAssistant.
 
 ## Issues and Support
-If you encounter any issues with this mod, DM me on Discord forked_bytes or file an Issue on GitHub and I'll fix it as soon as I can. For support with the mod, DM me or ask a question on the #pc-help channel on the BSMG discord
+If you encounter any issues with this mod, DM me on Discord @.iz.a or file an Issue on GitHub and I'll fix it as soon as I can. For support with the mod, DM me or ask a question on the #pc-help channel on the BSMG discord
 
 ## Contribution
 If you're a developer and would like to contribute to this mod, your contributions are welcome! Just submit a PR and I will take a look at it.
