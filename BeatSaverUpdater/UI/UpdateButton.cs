@@ -185,7 +185,7 @@ namespace BeatSaverUpdater.UI
             if (downloadedLevelHash != null)
             {
                 SongCore.Loader.SongsLoadedEvent += OnSongsLoaded;
-                SongCore.Loader.Instance.RefreshSongs(false);
+                SongCore.Loader.Instance.RefreshSongs(true);
             }
         }
 
