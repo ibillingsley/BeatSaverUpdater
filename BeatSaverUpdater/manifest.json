@@ -3,7 +3,7 @@
     "id": "BeatSaverUpdater",
     "name": "BeatSaverUpdater",
     "author": "PixelBoom, iza",
-    "version": "1.2.11",
+    "version": "1.2.12",
     "description": "Alerts you of updates to maps and updates them to the latest version.",
     "gameVersion": "1.40.0",
     "icon": "BeatSaverUpdater.Images.Logo.png",

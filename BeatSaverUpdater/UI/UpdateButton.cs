@@ -110,12 +110,6 @@ namespace BeatSaverUpdater.UI
             return image;
         }
 
-        private IEnumerator SetActive(bool value)
-        {
-            yield return null;
-            image?.gameObject.SetActive(value);
-        }
-
         private void ContentChanged(StandardLevelDetailViewController standardLevelDetailViewController, StandardLevelDetailViewController.ContentType contentType)
         {
             if (contentType == StandardLevelDetailViewController.ContentType.OwnedAndReady)
@@ -132,16 +126,18 @@ namespace BeatSaverUpdater.UI
 
             if (image != null)
             {
+                image.gameObject.SetActive(false);
                 if (beatmapLevel is { hasPrecalculatedData: false } && !beatmapLevel.levelID.EndsWith(" WIP"))
                 {
                     if (!PluginConfig.Instance.UseCache || songDetailsWrapper == null || !await songDetailsWrapper.SongExists(beatmapLevel.GetBeatmapHash()))
                     {
                         var needsUpdate = await beatmapLevel.NeedsUpdate(tokenSource.Token);
-                        standardLevelDetailViewController.StartCoroutine(SetActive(needsUpdate));
-                        return;
+                        if (standardLevelDetailViewController.beatmapLevel == beatmapLevel)
+                        {
+                            image.gameObject.SetActive(needsUpdate);
+                        }
                     }
                 }
-                standardLevelDetailViewController.StartCoroutine(SetActive(false));
             }
         }
 
