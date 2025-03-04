@@ -52,7 +52,7 @@
 			<HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.UI.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
-		<Reference Include="DataModels">
+		<Reference Include="DataModels" Publicize="true">
 			<HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\DataModels.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
@@ -130,5 +130,6 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" PrivateAssets="all" />
 	</ItemGroup>
 </Project>

@@ -32,11 +32,12 @@ namespace BeatSaverUpdater.UI
         private readonly StandardLevelDetailViewController standardLevelDetailViewController;
         private readonly PopupModal popupModal;
         private readonly List<IMigrator> migrators;
+        private readonly CustomLevelLoader customLevelLoader;
         private SongDetailsWrapper? songDetailsWrapper;
 
         public UpdateButton(DiContainer container, HoverHintController hoverHintController, SelectLevelCategoryViewController selectLevelCategoryViewController,
             LevelCollectionNavigationController levelCollectionNavigationController, StandardLevelDetailViewController standardLevelDetailViewController,
-            PopupModal popupModal, List<IMigrator> migrators, [InjectOptional] SongDetailsWrapper? songDetailsWrapper)
+            PopupModal popupModal, List<IMigrator> migrators, CustomLevelLoader customLevelLoader, [InjectOptional] SongDetailsWrapper? songDetailsWrapper)
         {
             this.container = container;
             this.hoverHintController = hoverHintController;
@@ -46,6 +47,7 @@ namespace BeatSaverUpdater.UI
             this.standardLevelDetailViewController = standardLevelDetailViewController;
             this.popupModal = popupModal;
             this.migrators = migrators;
+            this.customLevelLoader = customLevelLoader;
             this.songDetailsWrapper = songDetailsWrapper;
         }
 
@@ -221,7 +223,7 @@ namespace BeatSaverUpdater.UI
                 var downloadedLevelAfterUpdate = SongCore.Loader.GetLevelByHash(downloadedLevelHash ?? "");
                 if (downloadedLevelAfterUpdate != null)
                 {
-                    OpenMap(downloadedLevel);
+                    OpenMap(downloadedLevelAfterUpdate);
                 }
             }
             popupModal.HideModal();
@@ -233,15 +235,14 @@ namespace BeatSaverUpdater.UI
 
             foreach (var migrator in migrators)
             {
-                preventDelete = preventDelete || migrator.MigrateMap(oldLevel, downloadedLevel);
+                preventDelete = migrator.MigrateMap(oldLevel, downloadedLevel) || preventDelete;
             }
 
-            if (!preventDelete)
+            if (!preventDelete && customLevelLoader._loadedBeatmapSaveData.TryGetValue(oldLevel.levelID, out var saveData))
             {
-                var folderPath = oldLevel.GetFolderPath();
-                if (!string.IsNullOrEmpty(folderPath))
+                if (!string.IsNullOrEmpty(saveData.customLevelFolderInfo.folderPath))
                 {
-                    SongCore.Loader.Instance.DeleteSong(folderPath);
+                    SongCore.Loader.Instance.DeleteSong(saveData.customLevelFolderInfo.folderPath);
                 }
             }
         }
