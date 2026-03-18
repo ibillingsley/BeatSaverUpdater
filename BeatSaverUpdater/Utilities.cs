@@ -87,7 +87,7 @@ namespace BeatSaverUpdater
 
         private static string FolderNameForBeatSaverMap(Beatmap song)
         {
-            var maxLength = 126;
+            var maxLength = 49;
             var longFolderName = song.ID + " (" + song.Metadata.SongName + " - " + song.Metadata.LevelAuthorName;
             if (longFolderName.Length > maxLength)
             {
